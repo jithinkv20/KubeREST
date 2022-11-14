@@ -1,48 +1,28 @@
-apiVersion: apps/v1
-kind: Deployment
+
+apiVersion: batch/v1
+kind: Job
 metadata:
-  labels:
-    app: restarter
   name: restarter
   namespace: xmrig
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: restarter
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
   template:
-    metadata:
-      labels:
-        app: restarter
     spec:
       containers:
       - image: ghcr.io/jithinkv20/kuberest:master
-        imagePullPolicy: Always
         name: restarter
         env:
         - name: KUBECONFIG
-          value: ""
+          value: "/config/config"
         volumeMounts:
-        - mountPath: /data/k3s.yaml
-          name: kubeconfig
+        - mountPath: /config
+          name: config
         resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
+      restartPolicy: Never
       volumes:
-      - name: kubeconfig
+      - name: config
         hostPath:
           # directory location on host
-          path: /data
+          path: /root
           # this field is optional
-          type: /etc/rancher/k3s
+          type: Directory
 status: {}
