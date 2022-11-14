@@ -9,8 +9,8 @@ namespace dotnetapp // Note: actual namespace depends on the project name.
         {
 
             // Load from in-cluster configuration:
-            var config = KubernetesClientConfiguration.InClusterConfig();
-
+            var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(Environment.GetEnvironmentVariable("KUBECONFIG"));
+            
             var client = new Kubernetes(config);
 
             k8s.Models.V1PodList plist = client.CoreV1.ListNamespacedPod("xmrig");
